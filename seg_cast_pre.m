@@ -9,6 +9,9 @@ cur_pre_prob = [];
 
 has_prediction = 0;
 for fs = 1:no_fired
+    if segs_para(fired_seg(fs,1), 11) == 0
+        continue;
+    end
     cur_stat = seg_prediction_stat{fired_seg(fs,1),1};
     
     if ~isempty(cur_stat)

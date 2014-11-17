@@ -22,7 +22,7 @@ seg_sum = sum(seg_sum,2);
 
 
 usable_seg = (1:seg_index)';
-usable_seg = usable_seg(seg_sum > 0.9 * seg_len);
+usable_seg = usable_seg(seg_sum > 0.7 * seg_len);
 
 if isempty(usable_seg)
     seg_index = seg_index + 1;

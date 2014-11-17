@@ -45,34 +45,27 @@ if no_mem >= no_nn,
     
     no_box_to_create = floor(no_mem/no_nn);
     
-    start_i = 1;
     for bc = 1:no_box_to_create,
-        if bc == no_box_to_create
-            end_i = no_mem;
-        else
-            end_i = start_i + no_nn -1;
-        end
-        temp_mem = mem(start_i:end_i,:);
-        start_i = end_i + 1;
     
-        mu = mean(temp_mem);
-        std_d = std(temp_mem);
-
-        if sum(abs(mu(1) - boxes_para(1:box_index,1)) < 1 & abs(mu(2) - boxes_para(1:box_index,2)) < 1) == 0
-%         if 1
-
-            [max_box,~] = size(boxes_para);
-            box_index = box_index + 1;
-            if box_index > max_box,
-                fprintf('boxes para is full\n');
-            else
-                boxes_para(box_index,1:3) = mu;
-                boxes_para(box_index,4:6) = std_d;
-                boxes_para(box_index,7) = 0.8;
-                boxes_para(box_index,8) = no_mem;        
-                boxes_para(box_index,11) = 1;
-            end    
-        end
+    
+    
+    mu = mean(mem);
+    std_d = std(mem);
+    
+%     if sum(abs(mu(1) - boxes_para(1:box_index,1)) < 1 & abs(mu(2) - boxes_para(1:box_index,2)) < 1) == 0
+    if 1
+    
+        [max_box,~] = size(boxes_para);
+        box_index = box_index + 1;
+        if box_index > max_box,
+            fprintf('boxes para is full\n');
+        else
+            boxes_para(box_index,1:3) = mu;
+            boxes_para(box_index,4:6) = std_d;
+            boxes_para(box_index,7) = 0.9;
+            boxes_para(box_index,8) = no_mem;        
+            boxes_para(box_index,11) = 1;
+        end    
     end
 
 end

@@ -11,18 +11,13 @@ no_fired = length(fired_seg);
 for fs = 1:no_fired
     fs_id = fired_seg(fs,1);
     tar_id = seg_history(seg_history_index - min_future_prediction, 1); 
+    temp_seg_hist = flipud(seg_history(1:seg_history_index,1:2));
+    temp_id = find(temp_seg_hist,2 < )
+    
+    
+    
     % thinnk about multiple spiking neuron at that stage or a rand time
     time_dif = cur_time - seg_history(seg_history_index - min_future_prediction, 2);
-% 
-%     temp_seg_hist = flipud(seg_history(1:seg_history_index,1:2));
-%     temp_id = find(temp_seg_hist(:,2) < cur_time - 500, 1);
-%     if isempty(temp_id)
-%         continue;
-%     end
-%     tar_id = temp_seg_hist(temp_id, 1);
-%     time_dif = cur_time - temp_seg_hist(temp_id,2);
-    
-
     
     tar_prediction_stat = seg_prediction_stat{tar_id,1};
     

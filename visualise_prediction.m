@@ -41,7 +41,7 @@ plot3(temp(1:cur_e,1),temp(1:cur_e,2), temp(1:cur_e,3),'b*', 'MarkerSize', 2);
 hold on
 plot3(output_sample_pt(:,1),output_sample_pt(:,2), output_sample_pt(:,3),'r*', 'MarkerSize', 2);
 
-% return
+return
 
 output_sample_pt = sortrows(output_sample_pt,3);
 output_sample_pt(:,3) = output_sample_pt(:,3) - output_sample_pt(1,3);
@@ -79,7 +79,7 @@ figure
 for f = 1:ceil(time_dur/tbin)
     imagesc(squeeze(output_cube(:,:,f)));
     caxis([0 1])
-    pause(0.5);
+    pause(0.1);
 end
 
 

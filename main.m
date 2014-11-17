@@ -31,8 +31,12 @@ close all
 % warning off
 clearvars -except 'inputs'
 
-temp = inputs(1:50000,:);
-temp = inputs;
+
+temp = inputs(1:25000,:);
+% temp = inputs;
+% temp(temp(:,2)<35,:) = [];
+% temp(temp(:,2)>50,:) = [];
+
 [no_inputs,~] = size(temp);
 
 
@@ -41,7 +45,7 @@ pseudo_events = zeros(init_max_pseudo_events, 3); % [time, status, neuron_no]
 % status 1: box conclude 2 unborn conclude
 pseudo_events_index = 0;
 
-max_box = 1000;
+max_box = 10000;
 boxes_memory = cell(max_box,1); %memory
 boxes_para = zeros(max_box,11); % mean and std, 7:threshold, 8:n, 9:status: 0 unused 1 in progress 10: current 11:count
 box_index = 0;
@@ -49,7 +53,7 @@ box_index = 0;
 unborn_boxes_memory = cell(max_box,1); %memory
 unborn_boxes_para = zeros(max_box,7); % 6 dim limit 7 id
 unborn_box_index = 0;
-unborn_default_details = [16 16 250 100]; %x y time no
+unborn_default_details = [4 4 500 10]; %x y time no
 
 temp_history = zeros(max_box,7);
 temp_memory = cell(max_box,1);
@@ -65,15 +69,15 @@ seg_index = 0;
 seg_history = zeros(5000,2);
 seg_history_index = 0;
 
-
-seg_prediction = cell(no_inputs,1); 
-seg_prediction_e = zeros(no_inputs,2);
+max_seg_pre = 10000;
+seg_prediction = cell(max_seg_pre,1); 
+seg_prediction_e = zeros(max_seg_pre,2);
 seg_pre_index = 0;
-prediction_output = cell(no_inputs,1); 
-prediction_output_e = zeros(no_inputs,2);
+prediction_output = cell(max_seg_pre*seg_len,1); 
+prediction_output_e = zeros(max_seg_pre*seg_len,2);
 pre_output_index = 0;
 
-min_future_prediction = 10;
+min_future_prediction = 50;
 seg_prediction_stat = cell(max_seg,1); 
 
 
@@ -107,38 +111,36 @@ for e = 1:no_inputs,
 %            if box_history_index > last_bi
 %                fprintf('just fired bhi %d\n', box_history_index);
 %            end
-           if box_history_index >= seg_len + 1 && box_history_index > last_bi
-                [seg_history, seg_history_index, segs_para, seg_index, fired_seg] = ...
-                    check_seg(seg_history, seg_history_index, segs_para, seg_index,...
-                    box_history(box_history_index-seg_len +1:box_history_index,:), event(3));
-               
-                if ~isempty(fired_seg)                    
-                    [seg_prediction_stat] = learn_seg(seg_history, ...
-                        seg_history_index, fired_seg, seg_prediction_stat, ...
-                        event(3), min_future_prediction);    
-                        
-                    if e > start_prediction
-                        [seg_prediction, seg_prediction_e, seg_pre_index] = seg_cast_pre(seg_prediction_stat, ...
-                            fired_seg, seg_prediction, segs_para, event(3),  e,  seg_prediction_e, seg_pre_index);
 
-                        if seg_pre_index > 0
-                            [cur_output] = generate_prediction_output(seg_prediction{seg_pre_index,1}, ...
-                                segs_para);
-                            if ~isempty(cur_output)
-                                pre_output_index = pre_output_index + 1;
-                                prediction_output_e(pre_output_index,1) = e;
-                                prediction_output_e(pre_output_index,2) = event(3);                            
-                                prediction_output{pre_output_index,1} = cur_output;
-                            end
-                        end
-                    end
-                    
-                    
-                    
-                end
-           
-           
-           end
+
+%            if box_history_index >= seg_len + 1 && box_history_index > last_bi
+%                 [seg_history, seg_history_index, segs_para, seg_index, fired_seg] = ...
+%                     check_seg(seg_history, seg_history_index, segs_para, seg_index,...
+%                     box_history(box_history_index-seg_len +1:box_history_index,:), event(3));
+%                
+%                 if ~isempty(fired_seg)                    
+%                     [seg_prediction_stat] = learn_seg(seg_history, ...
+%                         seg_history_index, fired_seg, seg_prediction_stat, ...
+%                         event(3), min_future_prediction);    
+%                         
+%                     if e > start_prediction
+%                         last_seg_pre_index = seg_pre_index;
+%                         [seg_prediction, seg_prediction_e, seg_pre_index] = seg_cast_pre(seg_prediction_stat, ...
+%                             fired_seg, seg_prediction, segs_para, event(3),  e,  seg_prediction_e, seg_pre_index);
+% 
+%                         if seg_pre_index > 0 && seg_pre_index > last_seg_pre_index
+%                             [cur_output] = generate_prediction_output(seg_prediction{seg_pre_index,1}, ...
+%                                 segs_para);
+%                             if ~isempty(cur_output)
+%                                 pre_output_index = pre_output_index + 1;
+%                                 prediction_output_e(pre_output_index,1) = e;
+%                                 prediction_output_e(pre_output_index,2) = event(3);                            
+%                                 prediction_output{pre_output_index,1} = cur_output;
+%                             end
+%                         end
+%                     end                    
+%                 end
+%            end
            
            
             
