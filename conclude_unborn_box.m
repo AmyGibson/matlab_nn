@@ -41,8 +41,7 @@ if no_mem >= no_nn,
     mem = mem(keep,:);
 
     [no_mem, ~] = size(mem);
-    
-    
+        
     no_box_to_create = floor(no_mem/no_nn);
     
     start_i = 1;
