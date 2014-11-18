@@ -9,16 +9,18 @@ cur_pre_prob = [];
 
 has_prediction = 0;
 for fs = 1:no_fired
-    if segs_para(fired_seg(fs,1), 11) == 0
+    if segs_para(fired_seg(fs,1), end) == 0 || isempty(seg_prediction_stat{fired_seg(fs,1),1})
         continue;
     end
+   
     cur_stat = seg_prediction_stat{fired_seg(fs,1),1};
+    
     
     if ~isempty(cur_stat)
 %         fprintf('fired %d \n', fired_seg(fs,1));
         cur_pre_id = vertcat(cur_pre_id, cur_stat(:,1));
         cur_pre_time = vertcat(cur_pre_time, cur_stat(:,2) + cur_time);
-        cur_pre_prob = vertcat(cur_pre_prob, cur_stat(:,3)/segs_para(fired_seg(fs,1), 11));
+        cur_pre_prob = vertcat(cur_pre_prob, cur_stat(:,3)/segs_para(fired_seg(fs,1), end));
         has_prediction = 1;
         
     end

@@ -1,5 +1,5 @@
-function [boxes_memory, boxes_para, box_history, box_history_index] = ...
-    conclude_box(boxes_para, boxes_memory, pe, box_history, box_history_index, e, no_nn)
+function [boxes_memory, boxes_para, box_history, box_history_index, box_evolve_history, bei] = ...
+    conclude_box(boxes_para, boxes_memory, pe, box_history, box_history_index, e, no_nn, box_evolve_history, bei)
 
 % boxes_para = zeros(max_box,11); % mean and std, 7:threshold, 8:n,
 % 9:status: 0 unused 1 in progress 10: current 11: count
@@ -16,6 +16,7 @@ current = 0;
 
 old_mu = (boxes_para(box_id,1:3))';
 old_mu(3) = 0;
+mtime = mean(box_mem(:,3));
 box_mem(:,3) = box_mem(:,3) - mean(box_mem(:,3));
 sig = zeros(3,3);
 for i = 1:3
@@ -45,22 +46,14 @@ if current > boxes_para(box_id,7) && no_mem >= no_nn
     for i = 1:3
         old_C(i,i) = boxes_para(box_id, i+3) ^2;
     end
-%     if e > 50000
-%         figure
-%         plot_gaussian_ellipsoid_contouronly(old_mu, old_C, 1, 4, [1 0 0])
-%         fprintf('old_mu\n');
-%         old_mu
-%         fprintf('old_C\n');
-%         old_C
-%         fprintf('old_no\n');
-%         boxes_para(box_id,8)
-%     end
+
     
     %%% learnt
     
     n = boxes_para(box_id,8);
     m = no_mem;    
     mem_mu = mean(box_mem);
+    
     box_mem(:,3) = box_mem(:,3) - mem_mu(3);
     mem_mu = mean(box_mem);
     mem_std = std(box_mem);
@@ -71,16 +64,13 @@ if current > boxes_para(box_id,7) && no_mem >= no_nn
     end
 
      
-%      if box_id == 1,
-%          sbi = sbi + 1;
-%          specific_box_history{sbi,1} = boxes_para(1,:);
-%          mem_para = zeros(1,11);
-%          mem_para(1:3) = mem_mu(:);
-%          mem_para(4:6) = mem_std(:);
-%          mem_para(11) = m;
-%          specific_box_history{sbi,2} = mem_para;
-%      end
-     
+     bei = bei + 1;
+     [max_be, be_col] = size(box_evolve_history);
+     if bei > max_be
+         newbe = zeros(2*max_be, be_col);
+         newbe(1:max_be,:) = box_evolve_history(:,:);
+         box_evolve_history = newbe;
+     end
      
      
      
@@ -96,30 +86,15 @@ if current > boxes_para(box_id,7) && no_mem >= no_nn
         part2 = m*(mem_C(i,i) + mem_mu(i)^2);        
         new_sig(i) = (part1 + part2)/(m+n) - new_mu(i)^2;
     end
-    
-%     new_C = zeros(3,3);
-%     for i = 1:3
-%         new_C(i,i) = new_sig(i);
-%     end
-%      if e > 50000
-%         hold on
-%         plot_gaussian_ellipsoid_contouronly(new_mu, new_C, 1, 4, [0 0 1])
-%         fprintf('new_mu\n');
-%         new_mu
-%         fprintf('new_C\n');
-%         new_C
-%      end
-    
-     
-     
      
     boxes_para(box_id,1:2) = new_mu(1:2);
     boxes_para(box_id,4:6) = sqrt(new_sig);
     boxes_para(box_id,8) = m+n;
     
-%     if box_id == 1,         
-%          specific_box_history{sbi,3} = boxes_para(1,:);
-%     end
+    box_evolve_history(bei,1:2) = [box_id, pe(1)];
+     box_evolve_history(bei,3:8) = boxes_para(box_id,1:6);
+     box_evolve_history(bei,5) = mtime;
+    
 end
 
 boxes_memory{box_id,1} = [];

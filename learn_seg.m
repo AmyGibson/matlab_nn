@@ -45,6 +45,9 @@ for fs = 1:no_fired
             tar_prediction_stat(fs_pos, 3) = cur_count + 1;
         end
     end
+%     if tar_id > 10000
+%         fprintf('tar_id %d should be error\n', tar_id);
+%     end
     seg_prediction_stat{tar_id,1} = tar_prediction_stat;
     
     

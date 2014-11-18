@@ -1,50 +1,23 @@
-% close all
-
 figure
-
-for b = 1:10
-    hold on
-    box_para = specific_box_history{b,1};
-    m = box_para(1:3);
+i = 102;
+bid = box_evolve_history(i,1);
+m = box_evolve_history(i,3:5);
+  m(3) = 0;  
     C = zeros(3,3);
-    m(3) = b *500;
-    for i = 1:3,
-        C(i,i) = box_para(i+3)^2;
+    for j = 1:3,
+        C(j,j) = box_evolve_history(j+5)^2;
     end
-    
-    plot_gaussian_ellipsoid_contouronly(m, C, 1, 4, [1 0 0])
-    
-    
+    plot_gaussian_ellipsoid_contouronly(m, C, 1, 4, colours(bid,:))
     
     hold on
-    box_para = specific_box_history{b,2};
-    m = box_para(1:3);
-    C = zeros(3,3);
-    m(3) = b *500;
+    
+    b = 2;
+    box_para = boxes_para(b,:);
+    m2 = box_para(1:3);
+    m2(3) = 0;
+    C2 = zeros(3,3);
     for i = 1:3,
-        C(i,i) = box_para(i+3)^2;
+        C2(i,i) = box_para(i+3)^2;
     end
-    
-    plot_gaussian_ellipsoid_contouronly(m, C, 1, 4, [0 1 0])
-    
-    hold on
-    box_para = specific_box_history{b,3};
-    m = box_para(1:3);
-    C = zeros(3,3);
-    m(3) = b *500;
-    for i = 1:3,
-        C(i,i) = box_para(i+3)^2;
-    end
-    
-    plot_gaussian_ellipsoid_contouronly(m, C, 1, 4, [0 0 1])
-    
-    
-end
-
-% hold on
-% plot3(temp(:,1), temp(:,2), temp(:,3), '*', 'MarkerSize', 1);
-% grid on
-% xlim([0 128])
-% ylim([0 128])
-
-
+    cr = 0.5;
+    plot_gaussian_ellipsoid_contouronly(m2, C2, 1, 4, [cr cr cr])
