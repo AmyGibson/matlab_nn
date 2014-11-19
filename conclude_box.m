@@ -65,11 +65,9 @@ if current > boxes_para(box_id,7) && no_mem >= no_nn
 
      
      bei = bei + 1;
-     [max_be, be_col] = size(box_evolve_history);
+     [max_be, ~] = size(box_evolve_history);
      if bei > max_be
-         newbe = zeros(2*max_be, be_col);
-         newbe(1:max_be,:) = box_evolve_history(:,:);
-         box_evolve_history = newbe;
+         box_evolve_history = doubling_matrix(box_evolve_history);
      end
      
      

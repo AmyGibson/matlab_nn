@@ -26,15 +26,10 @@ usable_seg = usable_seg(seg_sum > 0.7 * seg_len);
 
 if isempty(usable_seg)
     seg_index = seg_index + 1;
-    [max_seg,seg_col] = size(segs_para);
-    if seg_index > max_seg
-        new_sp = zeros(2*max_seg, seg_col);
-        new_sp(1:max_seg,:) = segs_para(:,:);
-        segs_para = new_sp;        
-        
-        new_ss = cell(2*max_seg, 1);
-        new_ss{1:max_seg,1} = seg_prediction_stat{:,1};
-        seg_prediction_stat = new_ss;
+    [max_seg,~] = size(segs_para);
+    if seg_index > max_seg             
+        segs_para = doubling_matrix(segs_para);
+        seg_prediction_stat = doubling_cells(seg_prediction_stat);
     end
         
     

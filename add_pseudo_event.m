@@ -9,11 +9,14 @@ if pseudo_events_index == 0
     next_empty_pe = find(pseudo_events(:,1) == 0,1);
     pseudo_events_index = 1;
 else
+%     [pseudo_events] = shift_pseudo_event(pseudo_events);
+%     pseudo_events_index = 1; % where the first pseudo event is
+%     next_empty_pe = find(pseudo_events(:,1) == 0,1);
     next_empty_pe = find(pseudo_events(pseudo_events_index:end,1) == 0,1) + pseudo_events_index -1;
 end
 
 if isempty(next_empty_pe) || no_pseudo_event> (max_pseudo_event - next_empty_pe),
-    [pseudo_events] = shift_pseudo_event(pseudo_events);
+    [pseudo_events] = shift_pseudo_event(pseudo_events, no_pseudo_event);
     pseudo_events_index = 1; % where the first pseudo event is
     next_empty_pe = find(pseudo_events(:,1) == 0,1);
 end
@@ -25,15 +28,17 @@ for pe = 1:no_pseudo_event,
     if next_empty_pe == 1
         insert_pt = 1;
     else
-%             fprintf('pseudo_events_index %d next_empty_pe %d\n', pseudo_events_index, next_empty_pe)
-
+%         fprintf('pseudo_events_index %d next_empty_pe %d time %.2f\n', pseudo_events_index, next_empty_pe, new_box(pe,2));
+            
         insert_pt = find(pseudo_events(pseudo_events_index:next_empty_pe-1,1) > new_box(pe,2),1)+ pseudo_events_index -1;
         if isempty(insert_pt)
             % nth is later than this pseudo event just add at the end
             insert_pt = next_empty_pe;
         end
     end
-    pseudo_events(insert_pt+1:end,:) = pseudo_events(insert_pt:end-1,:);
+    if insert_pt < max_pseudo_event
+        pseudo_events(insert_pt+1:end,:) = pseudo_events(insert_pt:end-1,:);
+    end
 %         fprintf('%d insert_pt\n', insert_pt);
     pseudo_events(insert_pt,1) = new_box(pe,2); %time
     pseudo_events(insert_pt,2) = new_box(pe,3);

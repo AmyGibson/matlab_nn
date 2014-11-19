@@ -54,25 +54,25 @@ if no_mem >= no_nn,
         if bc == no_box_to_create
             temp_mem = new_mem;
         else
-            [no_mem, ~] = size(new_mem);
-            std_d = std(new_mem);
-            converted_mem = zeros(size(new_mem));
-            converted_mem(:,1) = new_mem(:,1)/std_d(1);
-            converted_mem(:,2) = new_mem(:,2)/std_d(2);
-            converted_mem(:,3) = new_mem(:,3)/std_d(3);
-
-            core = converted_mem(1,:);
-            dist = zeros(no_mem,2);
-            dist(:,2) = 1:no_mem;
-            dist(:,1) = sqrt((converted_mem(:,1)-core(1)).^2 + ...
-                (converted_mem(:,2)-core(2)).^2 + (converted_mem(:,3)-core(3)).^2);
-
-            dist = sortrows(dist,1);
-            
-            keep = dist(1:no_nn,2);
-            temp_mem = new_mem(keep,:);
+%             [no_mem, ~] = size(new_mem);
+%             std_d = std(new_mem);
+%             converted_mem = zeros(size(new_mem));
+%             converted_mem(:,1) = new_mem(:,1)/std_d(1);
+%             converted_mem(:,2) = new_mem(:,2)/std_d(2);
+%             converted_mem(:,3) = new_mem(:,3)/std_d(3);
+% 
+%             core = converted_mem(1,:);
+%             dist = zeros(no_mem,2);
+%             dist(:,2) = 1:no_mem;
+%             dist(:,1) = sqrt((converted_mem(:,1)-core(1)).^2 + ...
+%                 (converted_mem(:,2)-core(2)).^2 + (converted_mem(:,3)-core(3)).^2);
+% 
+%             dist = sortrows(dist,1);
+%             
+%             keep = dist(1:no_nn,2);
+%             temp_mem = new_mem(keep,:);
             temp_mem = new_mem; % if only on dist for whole lot
-            new_mem(keep,:) = [];            
+%             new_mem(keep,:) = [];            
         end
         
 
@@ -99,11 +99,9 @@ if no_mem >= no_nn,
                 
                 
                 bei = bei + 1;
-                 [max_be, be_col] = size(box_evolve_history);
+                 [max_be, ~] = size(box_evolve_history);
                  if bei > max_be
-                     newbe = zeros(2*max_be, be_col);
-                     newbe(1:max_be,:) = box_evolve_history(:,:);
-                     box_evolve_history = newbe;
+                     box_evolve_history = doubling_matrix(box_evolve_history);
                  end
 
                  box_evolve_history(bei,1:2) = [box_index, pe(1)];

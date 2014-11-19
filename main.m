@@ -55,7 +55,7 @@ prediction_output = cell(max_seg_pre*seg_len,1);
 prediction_output_e = zeros(max_seg_pre*seg_len,2);
 pre_output_index = 0;
 
-min_future_prediction = 10;
+min_future_prediction = 500;
 seg_prediction_stat = cell(max_seg,1); 
 
 
