@@ -1,4 +1,4 @@
-start_point = max(1,pre_output_index -1000);
+start_point = max(1,pre_output_index -2000);
 end_point = pre_output_index;
 
 max_sample = 10000;
@@ -18,9 +18,10 @@ for po = start_point:end_point
             dist_C(i,i) = boxes_para(cur_dist_pre(d,1),i+3)^2;
         end
         gobj = gmdistribution(dist_m, dist_C);
-        samples = random(gobj, no_sample_per_prediction);
+        cur_sample_no = ceil(no_sample_per_prediction * cur_dist_pre(d,3));
+        samples = random(gobj, cur_sample_no);
         si = output_sample_pt_i + 1;
-        ei = output_sample_pt_i + no_sample_per_prediction;
+        ei = output_sample_pt_i + cur_sample_no;
         if ei > max_sample
             new_sample = zeros(2*max_sample, 4);
             new_sample(1:max_sample,:) = output_sample_pt(:,:);

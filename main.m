@@ -10,7 +10,7 @@ inputs = inputs(:,[1 2 4]);
 clearvars -except 'inputs'
 
 
-temp = inputs(1:100000,:);
+temp = inputs(1:50000,:);
 % temp = inputs;
 % temp(:,3) = temp(:,3) + inputs(100000,3);
 % temp = vertcat(inputs(1:100000,:), temp);
@@ -42,7 +42,7 @@ box_history_index = 0;
 
 seg_len = 3;
 max_seg = 10000;
-segs_para = zeros(max_seg, seg_len*2 + 1);
+segs_para = zeros(max_seg, seg_len*2 + 1); % dist id, dist time, count
 seg_index = 0;
 seg_history = zeros(5000,2);
 seg_history_index = 0;
@@ -55,7 +55,7 @@ prediction_output = cell(max_seg_pre*seg_len,1);
 prediction_output_e = zeros(max_seg_pre*seg_len,2);
 pre_output_index = 0;
 
-min_future_prediction = 500;
+min_future_prediction = 10;
 seg_prediction_stat = cell(max_seg,1); 
 
 
