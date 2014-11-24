@@ -1,4 +1,4 @@
-start_point = max(1,pre_output_index -2000);
+start_point = max(1,pre_output_index -1000);
 end_point = pre_output_index;
 
 max_sample = 10000;

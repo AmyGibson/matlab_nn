@@ -7,7 +7,7 @@ function [seg_history, seg_history_index, segs_para, seg_index, usable_seg, seg_
 %   fprintf('just fire\n');          
 cur_seg = box_history(:,1)';
 cur_seg_time = box_history(:,2)';
-cur_seg_time = cur_seg_time - cur_seg_time(end);
+cur_seg_time = cur_seg_time - cur_seg_time(1);
 
 cur_seg_len = length(cur_seg);
 
@@ -17,13 +17,9 @@ cur_seg_len = length(cur_seg);
 
 
 seg_sum = zeros(seg_index, seg_len);
-max_time_diff = 500;
+max_time_diff = 1000;
 
-if seg_history_index  < seg_len
-    recent_history = seg_history(1: seg_history_index,1);
-else
-    recent_history = seg_history(seg_history_index-seg_len + 1: seg_history_index,1);
-end
+recent_history = seg_history(seg_history_index-seg_len + 1: seg_history_index,1);
 
 for s = 1:seg_index
     if sum(recent_history == s) > 0
@@ -31,7 +27,7 @@ for s = 1:seg_index
     end
 
     seg_times = segs_para(s,seg_len+1:seg_len*2);
-    seg_times = seg_times - seg_times(end);    
+    seg_times = seg_times - seg_times(1);    
     seg_status = zeros(seg_len, 1);
     for ss = 1:cur_seg_len
         pos = find(segs_para(s,1:seg_len) == cur_seg(ss));        
@@ -118,7 +114,7 @@ if isempty(usable_seg)
     
     
     
-   segs_para(seg_index,1:seg_len) = cur_seg(cur_seg_len -seg_len + 1:end);
+   segs_para(seg_index,1:seg_len) = cur_seg;
    for i = 2:seg_len       
        segs_para(seg_index,seg_len + i) = box_history(i,2) - box_history(i-1,2);
    end

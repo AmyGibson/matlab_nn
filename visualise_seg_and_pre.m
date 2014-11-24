@@ -43,6 +43,10 @@ for i = 1:no_to_show
            hold on
             plot_gaussian_ellipsoid_contouronly(cur_m, cur_C, 1, 4, [c c c])
        end
+       view(3)
+       grid on;
+       xlim([0 128])
+       ylim([0 128])
         
         
    end

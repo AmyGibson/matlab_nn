@@ -89,6 +89,8 @@ if current > boxes_para(box_id,7) && no_mem >= no_nn
     boxes_para(box_id,4:6) = sqrt(new_sig);
     boxes_para(box_id,8) = m+n;
     
+    boxes_para(box_id,7) = boxes_para(box_id,7)*1.01;
+    
     box_evolve_history(bei,1:2) = [box_id, pe(1)];
      box_evolve_history(bei,3:8) = boxes_para(box_id,1:6);
      box_evolve_history(bei,5) = mtime;

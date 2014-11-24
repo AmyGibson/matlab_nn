@@ -2,15 +2,15 @@ close all
 
 addpath ./load_data
  
-data_name = 'Sidetoside';
-data_name = 'ball';
-[inputs, ~, ~] = load_data(data_name, 0);
-inputs = inputs(:,[1 2 4]);
+% data_name = 'Sidetoside';
+% data_name = 'ball';
+% [inputs, ~, ~] = load_data(data_name, 0);
+% inputs = inputs(:,[1 2 4]);
 % warning off
 clearvars -except 'inputs'
 
 
-temp = inputs(1:50000,:);
+temp = inputs(1:200000,:);
 % temp = inputs;
 % temp(:,3) = temp(:,3) + inputs(100000,3);
 % temp = vertcat(inputs(1:100000,:), temp);
@@ -40,7 +40,7 @@ temp_history_i = 0;
 box_history = zeros(5000,2);
 box_history_index = 0;
 
-seg_len = 3;
+seg_len = 5;
 max_seg = 10000;
 segs_para = zeros(max_seg, seg_len*2 + 1); % dist id, dist time, count
 seg_index = 0;
@@ -97,7 +97,7 @@ for e = 1:no_inputs,
            if box_history_index >= seg_len + 1 && box_history_index > last_bi
                 [seg_history, seg_history_index, segs_para, seg_index, fired_seg, seg_prediction_stat] = ...
                     check_seg(seg_history, seg_history_index, segs_para, seg_index,...
-                    box_history(box_history_index-seg_len +1:box_history_index,:), event(3),seg_prediction_stat);
+                    box_history(box_history_index-seg_len*2 +1:box_history_index,:), event(3),seg_prediction_stat, seg_len);
                
                 if ~isempty(fired_seg)                    
                     [seg_prediction_stat] = learn_seg(seg_history, ...
