@@ -1,6 +1,6 @@
 close all
 
-addpath ./load_data
+% addpath ./load_data
  
 % data_name = 'Sidetoside';
 % data_name = 'ball';
@@ -42,7 +42,7 @@ box_history_index = 0;
 
 seg_len = 5;
 max_seg = 10000;
-segs_para = zeros(max_seg, seg_len, 4); % dist id, dist time, dist var, dist weight
+segs_para = zeros(max_seg, seg_len, 5); % dist id, dist time, dist var, dist weight, dist count
 segs_th_count = zeros(max_seg,2); % th, count
 segs_memory = cell(max_seg,1);
 seg_index = 0;
@@ -100,10 +100,10 @@ for e = 1:no_inputs,
            if box_history_index >= seg_len + 1 && box_history_index > last_bi
                just_fired = box_history(last_bi+1:box_history_index,1);
                
-               [seg_history, seg_history_index, segs_para, seg_index, ...
-                   segs_memory, segs_th_count, fired_seg, seg_prediction_stat] = ...
+               [seg_history, seg_history_index, segs_para, segs_memory, ...
+                   segs_th_count, fired_seg, seg_prediction_stat] = ...
                     check_seg(seg_history, seg_history_index, segs_para, seg_index,...
-                    segs_memory, segs_th_count, just_fired, event(3),seg_prediction_stat, seg_len);
+                    segs_memory, segs_th_count, just_fired, event(3),seg_prediction_stat);
                
                
 %                 [seg_history, seg_history_index, segs_para, seg_index, fired_seg, seg_prediction_stat] = ...
@@ -115,22 +115,30 @@ for e = 1:no_inputs,
                         seg_history_index, fired_seg, seg_prediction_stat, ...
                         event(3), min_future_prediction);    
                         
-%                     if e > start_prediction
-%                         last_seg_pre_index = seg_pre_index;
-%                         [seg_prediction, seg_prediction_e, seg_pre_index] = seg_cast_pre(seg_prediction_stat, ...
-%                             fired_seg, seg_prediction, segs_para, event(3),  e,  seg_prediction_e, seg_pre_index);
-% 
-%                         if seg_pre_index > 0 && seg_pre_index > last_seg_pre_index
-%                             [cur_output] = generate_prediction_output(seg_prediction{seg_pre_index,1}, ...
-%                                 segs_para);
-%                             if ~isempty(cur_output)
-%                                 pre_output_index = pre_output_index + 1;
-%                                 prediction_output_e(pre_output_index,1) = e;
-%                                 prediction_output_e(pre_output_index,2) = event(3);                            
-%                                 prediction_output{pre_output_index,1} = cur_output;
-%                             end
-%                         end
-%                     end                    
+                    if e > start_prediction
+                        last_seg_pre_index = seg_pre_index;
+                        [seg_prediction, seg_prediction_e, seg_pre_index] ...
+                            = seg_cast_pre(seg_prediction_stat, fired_seg, ...
+                            seg_prediction, event(3), e, seg_prediction_e, ...
+                            seg_pre_index, segs_th_count);
+
+                        if seg_pre_index > 0 && seg_pre_index > last_seg_pre_index
+                            [cur_output] = generate_prediction_output(seg_prediction{seg_pre_index,1}, ...
+                                segs_para(1:seg_index,:,1:2));
+                            if ~isempty(cur_output)
+                                pre_output_index = pre_output_index + 1;
+                                prediction_output_e(pre_output_index,1) = e;
+                                prediction_output_e(pre_output_index,2) = event(3);                            
+                                prediction_output{pre_output_index,1} = cur_output;
+                            end
+                        end
+                    end                    
+                else
+%                     disp('here')
+                    [segs_para, segs_th_count, seg_prediction_stat, seg_index] = create_seg(...
+                        box_history(box_history_index-seg_len+1:box_history_index,:), ...
+                        event(3), seg_prediction_stat, segs_para, segs_th_count, seg_index);
+                    
                 end
            end
            

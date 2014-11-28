@@ -7,13 +7,15 @@ overlap_time_buffer = 10;
 
 
 [no_pre,~] = size(cur_pre);
-[~,seg_len] = size(segs_para);
+[~,seg_len,~] = size(segs_para);
 seg_len = ceil((seg_len-1)/2);
 % fprintf('no_pre %d\n', no_pre);
 for cp = 1:no_pre,
    cur_seg_id = cur_pre(cp,1); 
-   pre_box_id = segs_para(cur_seg_id,1:seg_len);
-   pre_box_time = segs_para(cur_seg_id,seg_len+1:seg_len*2); 
+   
+   cur_seg_len = seg_len - sum(squeeze(segs_para(cur_seg_id,:,1)) == 0);
+   pre_box_id = segs_para(cur_seg_id,1:cur_seg_len,1);
+   pre_box_time = segs_para(cur_seg_id,1:cur_seg_len,2); 
    pre_box_time = pre_box_time - max(pre_box_time) + cur_pre(cp,2); % because it is predicing the end
    
    for i = 1:length(pre_box_id)

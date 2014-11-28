@@ -1,20 +1,79 @@
-function [seg_history, seg_history_index, segs_para, seg_index, segs_memory, ...
+function [seg_history, seg_history_index, segs_para, segs_memory, ...
     segs_th_count, fired_seg, seg_prediction_stat] = check_seg(seg_history, ...
     seg_history_index, segs_para, seg_index, segs_memory, segs_th_count, ...
-    just_fired, cur_time, seg_prediction_stat, seg_len)
+    just_fired, cur_time, seg_prediction_stat)
 
+fired_seg = [];
 
+if seg_index == 0
+    return;
+end
 no_fired = length(just_fired);
+[~,seg_len, ~] = size(segs_para);
 
+to_process = zeros(seg_index,1);
+to_process = to_process == 1;
 
 for nf = 1:no_fired
-    
-    
-    
-    
-    
+    for s = 1:seg_len,       
+        to_process = to_process | segs_para(1:seg_index,s,1) == just_fired(nf);
+    end
 end
 
+no_to_process = sum(to_process);
+to_process_i = (1:seg_index)';
+to_process_i = to_process_i(to_process);
+
+
+for pi = 1:no_to_process
+    si = to_process_i(pi);
+    seg_mem = segs_memory{si};
+    cur_seg_len = seg_len - sum(squeeze(segs_para(si,:,1)) == 0);
+    for nf = 1:no_fired
+        if sum(squeeze(segs_para(si,:,1)) == just_fired(nf)) > 0
+            seg_mem = vertcat(seg_mem, [just_fired(nf) cur_time]);
+        end
+    end
+
+    [mem_len, ~] = size(seg_mem);
+    currents = zeros(seg_len,1);
+    for m = 1:mem_len,        
+        t = seg_mem(m,2) - cur_time;
+                
+        dist_pos = find(squeeze(segs_para(si,:,1)) == seg_mem(m,1));
+        for dp = 1:length(dist_pos)
+            
+            tmean =segs_para(si,dist_pos(dp),2);
+            ts =segs_para(si,dist_pos(dp),3);
+            if abs(t) > tmean+3*ts
+                continue;
+            end
+            
+            furthest = sqrt((tmean+3*ts -tmean)^2/ts);
+            md = sqrt((t -tmean)^2/ts);
+            currents(dist_pos(dp)) = currents(dist_pos(dp)) + (1 - md/furthest) * segs_para(si,s,4);
+        end
+    end
+    
+    if sum(currents)/cur_seg_len >= segs_th_count(si,1)
+        fired_seg = vertcat(fired_seg, si);
+        
+        segs_th_count(si,2) = segs_th_count(si,2) + 1;
+        seg_mem(:,2) = cur_time - seg_mem(:,2);
+        [means, stds, weights, th, counts] = update_seg(seg_mem, ...
+            currents, squeeze(segs_para(si,:,:)), segs_th_count(si,1));
+        segs_para(si,:,2) = means'; 
+        segs_para(si,:,3) = stds'; 
+        segs_para(si,:,4) = weights';
+        segs_para(si,:,5) = counts';
+        segs_th_count(si,1) = th;
+        seg_mem = [];
+        seg_history_index = seg_history_index + 1;
+        seg_history(seg_history_index,1) = si;
+        seg_history(seg_history_index,2) = cur_time;
+    end
+    segs_memory{si,1} = seg_mem;
+end
 
 
 
