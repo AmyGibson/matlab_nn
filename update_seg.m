@@ -18,7 +18,7 @@ for s = 1:seg_len
        weights(s) = weights(s) * 0.99;
        continue;
    end
-       
+%    weights(s) = weights(s) * 1.01;    
    new_sam = find(fire_src(:,1) == cur_id(s));
    for i = 1:length(new_sam)
         old_mu = means(s);

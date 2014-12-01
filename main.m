@@ -1,6 +1,6 @@
 close all
 
-% addpath ./load_data
+addpath ./load_data
  
 % data_name = 'Sidetoside';
 % data_name = 'ball';
@@ -10,8 +10,8 @@ close all
 clearvars -except 'inputs'
 
 
-temp = inputs(1:200000,:);
-% temp = inputs;
+% temp = inputs(1:200000,:);
+temp = inputs;
 % temp(:,3) = temp(:,3) + inputs(100000,3);
 % temp = vertcat(inputs(1:100000,:), temp);
 
